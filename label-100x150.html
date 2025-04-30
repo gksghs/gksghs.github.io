@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Stargate Hydrogen printable label 100x150mm or 4x6 inches</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <style>
+    @media print {
+      @page { margin: 0; }
+      input {
+        border: none;
+      }
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      height: 15cm;
+      width: 10cm;
+      padding: 2mm;
+      margin: 0;
+      border: 1px dashed #000;
+      box-sizing: border-box;
+    }
+
+    .grid-container {
+      width: 100%;
+      height: 100%;
+      display: grid;
+      grid-template-columns: min-content min-content minmax(0, 2fr) minmax(0, 2fr);
+      grid-template-rows: repeat(4, minmax(0, 1fr)) minmax(0, 2fr) 1cm 0.7cm minmax(0, 2fr);
+      border: 1px solid #000;
+      box-sizing: border-box;
+    }
+
+    .grid-item {
+      border: 1px solid #000;
+      padding: 5px;
+      box-sizing: border-box;
+      display: flex;
+      align-items: center;
+    }
+
+    .grid-item input {
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    .qr {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #999;
+    }
+
+    .qr img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .qr canvas {
+      display: none;
+    }
+
+    .center {
+      justify-content: center;
+    }
+
+    .span-2 {
+      grid-column: span 2;
+    }
+
+    .span-3 {
+      grid-column: span 3;
+    }
+
+    .span-4 {
+      grid-column: span 4;
+    }
+
+    .tooltip-container {
+      position: relative;
+      display: inline-block;
+    }
+
+    .tooltip-container .tooltip {
+      visibility: hidden;
+      background-color: #333;
+      color: #fff;
+      text-align: center;
+      padding: 5px;
+      border-radius: 4px;
+      position: absolute;
+      bottom: 125%; /* Position above the input */
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 1;
+      opacity: 0;
+      transition: opacity 0.2s;
+      font-size: 10pt;
+      max-width: 300px;
+      width: max-content;
+      word-wrap: break-word;
+    }
+
+    .tooltip-container:hover .tooltip {
+      visibility: visible;
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+  <div class="grid-container">
+    <div class="grid-item" style="grid-row: span 2;">Order nr</div>
+    <div class="grid-item">Stargate Hydrogen</div>
+    <div class="grid-item">
+      <input type="text" id="orderStargate" placeholder="25-1204">
+    </div>
+    <div class="grid-item" style="grid-row: span 2;"><div id="qrOrder" class="qr"></div></div>
+
+    <div class="grid-item">Vendor</div>
+    <div class="grid-item"><input type="text" id="orderVendor"></div>
+
+    <div class="grid-item" style="grid-row: span 2;">Item nr</div>
+    <div class="grid-item">Stargate Hydrogen</div>
+    <div class="grid-item"><input type="text" id="itemStargate" placeholder="300245"></div>
+    <div class="grid-item" style="grid-row: span 2;"><div id="qrItem" class="qr"></div></div>
+
+    <div class="grid-item">Vendor</div>
+    <div class="grid-item"><input type="text" id="itemVendor"></div>
+
+    <div class="grid-item">Lot / batch / serial number</div>
+    <div class="grid-item span-2">
+      <div class="tooltip-container">
+        <input type="text" id="lotNumber" />
+        <div class="tooltip">
+          If vendor doesn't use tracking numbers in their production process then a lot/batch number must be generated for all items in a shipment using format:<br><br>
+          Stargate Hydrogen purchase order number(nr of shipment starting from 1)<br><br>
+          Example:<br>
+          - First shipment lot/batch number: 25-1234(1)<br>
+          - Second shipment lot/batch number: 25-1234(2)
+        </div>
+      </div>
+    </div>
+    <div class="grid-item"><div id="qrLot" class="qr"></div></div>
+
+    <div class="grid-item">Quantity</div>
+    <div class="grid-item span-3">
+      <input type="number" id="quantity" placeholder="0">
+    </div>
+
+    <div class="grid-item span-4 center">
+      <span id="encoding"></span>
+    </div>
+    <div class="grid-item span-4 center">
+      <div id="qrEncoding" class="qr"></div>
+    </div>
+  </div>
+
+  <script>
+    function encodePoNumber() {
+      const orderInput = document.getElementById("orderStargate");
+      const orderQRElement = document.getElementById("qrOrder");
+      orderQRElement.innerHTML = "QR code if data correct";
+
+      if (orderInput.value.length > 7) {
+        alert('PO number wrong, should be in format: 25-1234')
+        orderInput.value = orderInput.value.slice(0, 7);
+      }
+
+      const poNumberPattern = /^\d{2}-\d{4}$/;
+      if (poNumberPattern.test(orderInput.value)) {
+        orderQRElement.innerHTML = "";
+        new QRCode(orderQRElement, orderInput.value);
+      }
+    }
+
+    function encodeData() {
+      const itemInput = document.getElementById("itemStargate");
+      const lotInput = document.getElementById("lotNumber");
+      const encodingElement = document.getElementById("encoding");
+
+      const itemQRElement = document.getElementById("qrItem");
+      const lotQRElement = document.getElementById("qrLot");
+      const encodingQRElement = document.getElementById("qrEncoding");
+
+      itemQRElement.innerHTML = "QR code if data correct";
+      lotQRElement.innerHTML = "QR code if data filled";
+      encodingQRElement.innerHTML = "QR code if data correct";
+
+      if (lotInput.value.length > 0) {
+        lotQRElement.innerHTML = "";
+        new QRCode(lotQRElement, lotInput.value);
+      }
+
+      if (itemInput.value.length > 6) {
+        alert('Item number too long, should be in format: 300245')
+        itemInput.value = itemInput.value.slice(0, 6);
+      }
+
+      const itemNumberPattern = /^\d{6}$/;
+      if (itemNumberPattern.test(itemInput.value)) {
+        const encodingText = itemInput.value && lotInput.value ? `${itemInput.value}<GS>${lotInput.value}` : '';
+        encodingElement.textContent = encodingText;
+
+        itemQRElement.innerHTML = "";
+        new QRCode(itemQRElement, itemInput.value);
+        encodingQRElement.innerHTML = "";
+        new QRCode(encodingQRElement, encodingText);
+      }
+    }
+
+    encodePoNumber(); // Initial call to set the QR code for the order number
+    encodeData(); // Initial call to set the encoding on page load
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const orderInput = document.getElementById("orderStargate");
+      const itemInput = document.getElementById("itemStargate");
+      const lotInput = document.getElementById("lotNumber");
+
+      orderInput.addEventListener("input", encodePoNumber);
+      itemInput.addEventListener("input", encodeData);
+      lotInput.addEventListener("input", encodeData);
+    });
+  </script>
+</body>
+</html>
