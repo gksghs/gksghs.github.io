@@ -5,19 +5,22 @@
   <title>Stargate Hydrogen dynamic warehouse bin label</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <style>
-    @media print {
-      @page { margin: 0; }
-      input {
-        border: none;
-      }
-    }
-
     body {
       font-family: Arial, sans-serif;
       font-size: 12px;
       margin: 0;
       border: 1px dashed #000;
       box-sizing: border-box;
+    }
+
+    @media print {
+      @page { margin: 0; }
+      input {
+        border: none;
+      }
+      body {
+        border: none;
+      }
     }
 
     .grid-container {
