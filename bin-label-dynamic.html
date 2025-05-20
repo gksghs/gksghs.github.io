@@ -122,7 +122,7 @@
     </div>
     <div>
       <label for="paddingInput">Page Padding (mm):</label>
-      <input type="number" id="paddingInput" value="5" min="0">
+      <input type="number" id="paddingInput" value="10" min="0">
     </div>
     <div>
       <label for="showBorders">Show Borders:</label>
@@ -135,6 +135,9 @@
     <div>
       <label for="fontSizeInput">Code Font Size (mm):</label>
       <input type="number" id="fontSizeInput" value="12" min="1" max="50" step="0.5">
+    </div>
+    <div>
+      <button id="singlePresetBtn">W50H40 label preset</button>
     </div>
   </div>
   <div class="grid-container">
@@ -265,6 +268,19 @@
       });
       qrSizeInput.addEventListener("input", () => updateGrid());
       fontSizeInput.addEventListener("input", () => updateGrid());
+
+      const singlePresetBtn = document.getElementById("singlePresetBtn");
+      singlePresetBtn.addEventListener("click", () => {
+        rowsInput.value = "1";
+        colsInput.value = "1";
+        widthInput.value = "50";
+        heightInput.value = "40";
+        paddingInput.value = "2";
+        fontSizeInput.value = "8";
+        
+        updatePageDimensions();
+        updateGrid();
+      });
 
       // Initial setup
       document.querySelector('.grid-container').classList.add('borders');
